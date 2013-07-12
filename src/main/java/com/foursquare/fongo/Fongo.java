@@ -1,5 +1,7 @@
 package com.foursquare.fongo;
 
+import com.mongodb.MockMongo;
+
 import com.mongodb.WriteConcern;
 
 import java.net.InetSocketAddress;
@@ -43,7 +45,6 @@ public class Fongo {
   private final ServerAddress serverAddress;
   private final Mongo mongo;
   private final String name;
-  private WriteConcern concern = WriteConcern.NONE;
 
   /**
    * 
@@ -52,7 +53,7 @@ public class Fongo {
   public Fongo(String name) {
     this.name = name;
     this.serverAddress = new ServerAddress(new InetSocketAddress(ServerAddress.defaultPort()));
-    this.mongo = createMongo();
+    this.mongo = MockMongo.create(this);
   }
   
   /**
@@ -109,47 +110,6 @@ public class Fongo {
    */
   public Mongo getMongo() {
     return this.mongo;
-  }
-  
-  public WriteConcern getWriteConcern() {
-    return concern ;
-  }
-  
-  private Mongo createMongo() {
-    Mongo mongo = Mockito.mock(Mongo.class);
-    Mockito.when(mongo.toString()).thenReturn(toString());
-    Mockito.when(mongo.getMongoOptions()).thenReturn(new MongoOptions());
-    Mockito.when(mongo.getDB(Mockito.anyString())).thenAnswer(new Answer<DB>(){
-      @Override
-      public DB answer(InvocationOnMock invocation) throws Throwable {
-        String dbName = (String) invocation.getArguments()[0];
-        return getDB(dbName);
-      }});
-    Mockito.when(mongo.getUsedDatabases()).thenAnswer(new Answer<Collection<DB>>(){
-      @Override
-      public Collection<DB> answer(InvocationOnMock invocation) throws Throwable {
-        return getUsedDatabases();
-      }});
-    Mockito.when(mongo.getDatabaseNames()).thenAnswer(new Answer<List<String>>(){
-      @Override
-      public List<String> answer(InvocationOnMock invocation) throws Throwable {
-        return getDatabaseNames();
-      }});
-    Mockito.doAnswer(new Answer<Void>(){
-      @Override
-      public Void answer(InvocationOnMock invocation) throws Throwable {
-        String dbName = (String) invocation.getArguments()[0];
-        dropDatabase(dbName);
-        return null;
-      }}).when(mongo).dropDatabase(Mockito.anyString());
-    Mockito.when(mongo.getWriteConcern()).thenReturn(getWriteConcern());
-    Mockito.doAnswer(new Answer<Void>(){
-      @Override
-      public Void answer(InvocationOnMock invocation) throws Throwable {
-        concern = (WriteConcern) invocation.getArguments()[0];
-        return null;
-      }}).when(mongo).setWriteConcern(Mockito.any(WriteConcern.class));
-    return mongo;
   }
   
   @Override

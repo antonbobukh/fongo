@@ -38,6 +38,12 @@ public class FongoDB extends DB {
 
   @Override
   public void requestEnsureConnection() {}
+  
+  @Override
+  public Mongo getMongo() {
+    System.out.println("FongoDB.getMongo " + fongo.getMongo().getClass());
+    return fongo.getMongo();
+  }
 
   @Override
   protected FongoDBCollection doGetCollection(String name) {
@@ -64,14 +70,10 @@ public class FongoDB extends DB {
    return fongo.getDB(name);
   }
   
-  @Override
-  public WriteConcern getWriteConcern() {
-    return fongo.getWriteConcern();
-  }
   
   @Override
   public ReadPreference getReadPreference() {
-    return ReadPreference.PRIMARY;
+    return ReadPreference.primary();
   }
   
   @Override

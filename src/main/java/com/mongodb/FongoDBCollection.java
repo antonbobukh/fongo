@@ -55,6 +55,12 @@ public class FongoDBCollection extends DBCollection {
     }
   }
   
+  @Override
+  public DB getDB() {
+    System.out.println("FongoDBCollection.getDB returning fongoDb");
+    return fongoDb;
+  }
+  
   private CommandResult insertResult(int updateCount) {
     CommandResult result = fongoDb.okResult();
     result.put("n", updateCount);

@@ -151,6 +151,7 @@
               <parallel>false</parallel>
               <forkMode>never</forkMode>
               <junitxml>.</junitxml>
+              <stdout>W</stdout>
           </configuration>
           <executions>
               <execution>
